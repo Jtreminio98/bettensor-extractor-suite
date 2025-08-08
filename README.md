@@ -6,13 +6,28 @@ This repository has been pre-configured to use the `recovery_wallet` and `defaul
 
 ## Quick Start
 
-The easiest way to run the extractor is to use the provided `run.sh` script.
+The easiest way to run the extractor is to use the provided `run.sh` script. This will query the network for all available predictions for the current day.
 
 ```bash
 ./run.sh
 ```
 
-This script will handle all the necessary steps to query the network and provide an analysis of the collected prediction data.
+## Querying for Specific Games
+
+You can now query for specific games by providing command-line arguments to the `get_predictions_improved.py` script.
+
+**Available Arguments:**
+*   `--sport`: The sport to filter by (e.g., `baseball`, `football`).
+*   `--league`: The league to filter by (e.g., `MLB`, `NFL`).
+*   `--date`: The date of the game in `YYYY-MM-DD` format.
+
+**Example:**
+
+To find predictions for an MLB game on August 8, 2025, you would run:
+
+```bash
+python3 get_predictions_improved.py --league MLB --date 2025-08-08
+```
 
 ## Manual Setup and Execution
 
@@ -33,14 +48,12 @@ pip install bittensor pydantic
 
 ### 2. Wallet Configuration
 
-This project is configured to use the following wallet:
+This project is hardcoded to use the following wallet:
 
 *   **Wallet Name:** `recovery_wallet`
 *   **Hotkey Name:** `default_hotkey`
 
-This wallet has already been registered on the `finney` network for `netuid 30`. If you need to use a different wallet, you can either:
-a) Update the `WALLET_NAME` and `HOTKEY_NAME` variables in the `run.sh` script.
-b) Manually edit the `get_predictions_improved.py` script.
+This wallet has already been registered on the `finney` network for `netuid 30`.
 
 ### 3. Running the Extractor
 

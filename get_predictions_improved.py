@@ -15,6 +15,7 @@ from typing import List, Dict, Any, Optional
 import bittensor as bt
 from pydantic import BaseModel, Field
 import time
+import argparse
 
 # Add the project root to the path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -150,26 +151,26 @@ def store_prediction(conn, prediction_data):
     
     conn.commit()
 
-async def query_miner_with_different_protocols(dendrite, axon, miner_info):
+async def query_miner_with_different_protocols(dendrite, axon, miner_info, args):
     """Try multiple protocols to query a miner"""
     protocols = [
         # Protocol 1: GameData synapse (original)
         GameData(
-            sport=None,
-            league=None,
-            game_date=datetime.now().strftime("%Y-%m-%d")
+            sport=args.sport,
+            league=args.league,
+            game_date=args.date
         ),
         
         # Protocol 2: PredictionSynapse
         PredictionSynapse(
             request_type="get_predictions",
-            filters={"active": True, "date": datetime.now().strftime("%Y-%m-%d")}
+            filters={"active": True, "date": args.date, "league": args.league, "sport": args.sport}
         ),
         
         # Protocol 3: BettensorSynapse
         BettensorSynapse(
             synapse_type="prediction_request",
-            params={"sport": "all", "league": "all"}
+            params={"sport": args.sport, "league": args.league, "date": args.date}
         ),
         
         # Protocol 4: Simple synapse
@@ -206,7 +207,7 @@ async def query_miner_with_different_protocols(dendrite, axon, miner_info):
     
     return None, None
 
-async def query_bittensor_miners_improved():
+async def query_bittensor_miners_improved(args):
     """Improved version of miner querying with multiple protocols"""
     print("🔧 Initializing Bittensor connection...")
     
@@ -219,8 +220,8 @@ async def query_bittensor_miners_improved():
             network = NETWORK_CONFIG['network']
             netuid = NETWORK_CONFIG['netuid']
         except ImportError:
-            wallet_name = 'default'
-            hotkey_name = 'default'
+            wallet_name = 'recovery_wallet'
+            hotkey_name = 'default_hotkey'
             network = 'finney'
             netuid = 30
         
@@ -294,7 +295,7 @@ async def query_bittensor_miners_improved():
             
             try:
                 response, protocol = await query_miner_with_different_protocols(
-                    dendrite, miner['axon'], miner
+                    dendrite, miner['axon'], miner, args
                 )
                 
                 if response:
@@ -641,11 +642,17 @@ def analyze_consensus(predictions: List[Dict]):
             print()
 
 async def main():
+    parser = argparse.ArgumentParser(description="Bettensor Prediction Extractor")
+    parser.add_argument("--sport", type=str, default=None, help="Sport to filter by (e.g., 'baseball')")
+    parser.add_argument("--league", type=str, default=None, help="League to filter by (e.g., 'MLB')")
+    parser.add_argument("--date", type=str, default=datetime.now().strftime("%Y-%m-%d"), help="Date to filter by (YYYY-MM-DD)")
+    args = parser.parse_args()
+
     print("🚀 BETTENSOR PREDICTIONS EXTRACTOR (IMPROVED)")
     print("=" * 60)
     
     # Query miners for predictions
-    predictions = await query_bittensor_miners_improved()
+    predictions = await query_bittensor_miners_improved(args)
     
     if predictions:
         print(f"\n✅ Successfully extracted {len(predictions)} predictions")
