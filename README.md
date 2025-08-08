@@ -6,15 +6,33 @@ This repository has been pre-configured to use the `recovery_wallet` and `defaul
 
 ## Quick Start
 
-The easiest way to run the extractor is to use the provided `run.sh` script. This will query the network for all available predictions for the current day.
+The easiest way to run the extractor is to use the provided `run.sh` script.
 
 ```bash
 ./run.sh
 ```
 
-## Querying for Specific Games
+This script will query the network for all available predictions for the current day.
 
-You can now query for specific games by providing command-line arguments to the `get_predictions_improved.py` script.
+## Querying Methods
+
+There are two main ways to query for predictions:
+
+### 1. Fetch All Available Predictions
+
+To pull all predictions that miners are currently offering for today, run the script without any arguments. This is the most common use case. The `run.sh` script is the easiest way to do this.
+
+```bash
+# Easiest method
+./run.sh
+
+# Or manually
+python3 get_predictions_improved.py
+```
+
+### 2. Query for Specific Games
+
+You can also query for specific games by providing command-line arguments.
 
 **Available Arguments:**
 *   `--sport`: The sport to filter by (e.g., `baseball`, `football`).
