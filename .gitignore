@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+
+# Bittensor
+/data/
+/logs/
+
+# Output files
+predictions_extract_*.json
